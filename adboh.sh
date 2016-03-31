@@ -3,8 +3,6 @@
 
 # the location of the adb util
 adb_bin="/opt/android-sdk-linux/platform-tools/adb"
-# ip address of the device to use (override with -d)
-deviceip="10.220.29.213"
 
 #############
 # Functions #
@@ -13,12 +11,15 @@ deviceip="10.220.29.213"
 function connect_adb {
     # Establish an ADB session
     $adb_bin connect $deviceip
+    connected=1
     sleep 3
 }
 
 function disconnect_adb {
     # Disconnect the ADB session
-    $adb_bin disconnect $deviceip
+    if [ -v connected ]; then
+        $adb_bin disconnect $deviceip
+    fi
 
 }
 
@@ -27,6 +28,12 @@ function send_keyevent {
     for var in "$@"
         do $adb_bin shell input keyevent "$var"
     done
+
+}
+
+function start_app {
+# start_app <com.package.name/com.package.name.ActivityName>
+    $adb_bin shell am start -n $package
 
 }
 
@@ -41,7 +48,7 @@ function wake_device {
 # Argument Processing #
 #######################
 # Execute getopt on the arguments passed to this program, identified by the special character $@
-args=`getopt -n "$0" -o "vd:h" --long "deviceip:" -- "$@"`
+args=`getopt -n "$0" -o "d:ha:k:" --long "deviceip:,app:,keys:" -- "$@"`
 
 # Bad arguments, something has gone wrong with the getopt command.
 if [ $? -ne 0 ];
@@ -57,36 +64,41 @@ while true;
 do
     case "$1" in
 
-
 	-d|--deviceip)
 	    if [ -n "$2" ]; then
 		deviceip=$2
 	    fi
 
+		connect_adb 
 	    shift 2;;
 
-	-k|--key)
+	-k|--keys)
 	    if [ -n "$2" ]; then
-		key=$2
+		keys=$2
 	    fi
 
+	    send_keyevent $keys
 	    shift 2;;
 
-
-	-p|--program)
+	-a|--app)
 	    if [ -n "$2" ]; then
-		program=$2
+		package=$2
 	    fi
-	    echo "-d, --deviceip"
+	    start_app
 
 	    shift 2;;
 
 	-h|--help)
 	    # Print help information
 	    echo "Available options:"
-	   
+	    echo "-d | --deviceip"
+	    echo -e "\tThe IP Address for the device you are connecting to\n"
+	    echo "-a | --app"
+	    echo -e "\tApplication to start in com.package.name/com.package.name.Activity format\n"
+	    echo "-k | --keys"
+	    echo -e "\tKey events to send to device (enclose multiple in double quotes)\n"
 	    echo "-h | --help"
-	    echo -n "\tDisplay this help menu"
+	    echo -n "\tDisplay this help menu\n"
 	    exit
 	    shift 2;;
 
@@ -97,11 +109,4 @@ do
     esac
 done
 
-
-########
-# Main #
-########
-
-connect_adb
-send_keyevent 26
 disconnect_adb
