@@ -23,10 +23,72 @@ function disconnect_adb {
 
 }
 
+function adb_reboot {
+    # issue reboot
+    $adb_bin shell reboot &
+    connected=1
+    sleep 3
+}
+
 function send_keyevent {
 # send_keyevent <arg> (<arg> <arg>)
     for var in "$@"
-        do $adb_bin shell input keyevent "$var"
+	do
+	    case "$var" in
+		up)
+		    var=19
+		    shift 2;;
+		down)
+		    var=20
+		    shift 2;;
+		left)
+		    var=21
+		    shift 2;;
+		right)
+		    var=22
+		    shift 2;;
+		enter)
+		    var=66
+		    shift 2;;
+		back)
+		    var=4
+		    shift 2;;
+		home)
+		    var=3
+		    shift 2;;
+		menu)
+		    var=1
+		    shift 2;;
+		play)
+		    var=85
+		    shift 2;;
+		pause)
+		    var=85
+		    shift 2;;
+		previous)
+		    var=88
+		    shift 2;;
+		next)
+		    var=87
+		    shift 2;;
+		power)
+		    var=26
+		    shift 2;;
+		settings)
+		    longpress=1 
+		    var=3
+		    shift 2;;
+		--)
+		    # There are no final arguments left to process, end
+		    shift
+		    break;;
+		esac
+	if [ -v longpress ]; then
+	    $adb_bin shell input keyevent --longpress "$var"
+	    unset longpress
+	else
+	    $adb_bin shell input keyevent "$var"
+	fi	
     done
 
 }
@@ -37,9 +99,29 @@ function start_app {
 
 }
 
-function wake_device {
-    # Wake a sleeping device
-    send_keyevent 26
+function quick_state {
+    case "$state" in
+		wake)
+		    send_keyevent "power"
+		    shift 2;;
+	    	sleep)
+		    send_keyevent "power"
+		    shift 2;;
+#		mirror)
+#		    send_keyevent "settings right enter"
+#		    shift 2;;
+#		settings)
+#		    send_keyevent "settings right right enter"
+#		    shift 2;;
+		reboot)
+		    adb_reboot
+		    disconnect_adb
+		    shift 2;;
+		--)
+		    # There are no final arguments left to process, end
+		    shift
+		    break;;
+		esac
 
 }
 
@@ -48,7 +130,7 @@ function wake_device {
 # Argument Processing #
 #######################
 # Execute getopt on the arguments passed to this program, identified by the special character $@
-args=`getopt -n "$0" -o "d:ha:k:" --long "deviceip:,app:,keys:" -- "$@"`
+args=`getopt -n "$0" -o "d:ha:k:s:" --long "deviceip:,app:,keys:,state:" -- "$@"`
 
 # Bad arguments, something has gone wrong with the getopt command.
 if [ $? -ne 0 ];
@@ -80,6 +162,15 @@ do
 	    send_keyevent $keys
 	    shift 2;;
 
+	-s|--state)
+	    if [ -n "$2" ]; then
+		state=$2
+	    fi
+
+	    quick_state $state
+	    shift 2;;
+
+
 	-a|--app)
 	    if [ -n "$2" ]; then
 		package=$2
@@ -97,6 +188,9 @@ do
 	    echo -e "\tApplication to start in com.package.name/com.package.name.Activity format\n"
 	    echo "-k | --keys"
 	    echo -e "\tKey events to send to device (enclose multiple in double quotes)\n"
+	    echo "-s | --state"
+	    echo -e "\tQuick State, currently supported options are;\n"
+	    echo -e "\t\twake, sleep, reboot\n"
 	    echo "-h | --help"
 	    echo -n "\tDisplay this help menu\n"
 	    exit
