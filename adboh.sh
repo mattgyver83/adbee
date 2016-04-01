@@ -105,10 +105,10 @@ function quick_state {
 # quick_state <state>
     case "$state" in
 		wake)
-		    send_keyevent power
+		    send_keyevent KEYCODE_WAKEUP
 		    shift 2;;
 	    	sleep)
-		    send_keyevent power
+		    send_keyevent KEYCODE_POWER
 		    shift 2;;
 		mirror)
 		    send_keyevent settings right enter
