@@ -1,3 +1,4 @@
+#!/bin/bash
 # This script wraps up some simple adb processes so that you can call it a little easier when
 # integrating android device calls via ADB.
 
