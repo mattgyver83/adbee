@@ -108,7 +108,9 @@ function quick_state {
 		    send_keyevent KEYCODE_WAKEUP
 		    shift 2;;
 	    	sleep)
-		    send_keyevent KEYCODE_POWER
+		    if $adb_bin shell dumpsys power | grep -q "Display Power: state=ON" ; then 
+			send_keyevent KEYCODE_POWER
+		    fi 
 		    shift 2;;
 		mirror)
 		    send_keyevent settings right enter
