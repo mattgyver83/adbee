@@ -3,7 +3,7 @@
 # integrating android device calls via ADB.
 
 # the location of the adb util
-adb_bin="/opt/android-sdk-linux/platform-tools/adb"
+adb_bin=$(which adb)
 
 #############
 # Functions #
