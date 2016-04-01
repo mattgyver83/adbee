@@ -100,19 +100,21 @@ function start_app {
 }
 
 function quick_state {
+# send the device into another state, do not quote
+# quick_state <state>
     case "$state" in
 		wake)
-		    send_keyevent "power"
+		    send_keyevent power
 		    shift 2;;
 	    	sleep)
-		    send_keyevent "power"
+		    send_keyevent power
 		    shift 2;;
-#		mirror)
-#		    send_keyevent "settings right enter"
-#		    shift 2;;
-#		settings)
-#		    send_keyevent "settings right right enter"
-#		    shift 2;;
+		mirror)
+		    send_keyevent settings right enter
+		    shift 2;;
+		settings)
+		    send_keyevent settings right right enter
+		    shift 2;;
 		reboot)
 		    adb_reboot
 		    disconnect_adb
@@ -151,7 +153,7 @@ do
 		deviceip=$2
 	    fi
 
-		connect_adb 
+	    connect_adb 
 	    shift 2;;
 
 	-k|--keys)
