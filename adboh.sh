@@ -3,7 +3,11 @@
 # integrating android device calls via ADB.
 
 # the location of the adb util
+source /etc/profile
 adb_bin=$(which adb)
+
+# debug log file location (default adb dir)
+logfile=/var/log/openhab/adbee/debug.log
 
 #############
 # Functions #
@@ -12,9 +16,9 @@ adb_bin=$(which adb)
 function enable_debug {
     set -x
     set -v
-    exec > >(tee -a debug.log)
-    exec 2> >(tee -a debug.log >&2)
-    echo "DEBUG: log will be stored in $(pwd)/debug.log"
+    exec > >(tee -a $logfile)
+    exec 2> >(tee -a $logfile >&2)
+    echo "DEBUG: log will be stored in $logfile"
 
 }
 
@@ -23,7 +27,7 @@ function connect_adb {
     $adb_bin connect $deviceip
     connected=1
     sleep 3
-    adb_id=$(adb devices | grep -w "device" | awk '{print $1}')
+    adb_id=$($adb_bin devices | grep -w "device" | awk '{print $1}')
     adb_bin="$adb_bin -s $adb_id"
 
 }
