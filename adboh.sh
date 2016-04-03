@@ -10,10 +10,12 @@ adb_bin=$(which adb)
 #############
 
 function connect_adb {
-    # Establish an ADB session
+    # Establish an ADB session and get the emulator name
     $adb_bin connect $deviceip
     connected=1
     sleep 3
+    adb_id=$(adb devices | grep -w "device" | awk '{print $1}')
+    adb_bin="$adb_bin -s $adb_id"
 }
 
 function disconnect_adb {
