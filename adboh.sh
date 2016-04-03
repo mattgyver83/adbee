@@ -9,6 +9,15 @@ adb_bin=$(which adb)
 # Functions #
 #############
 
+function enable_debug {
+    set -x
+    set -v
+    exec > >(tee -a debug.log)
+    exec 2> >(tee -a debug.log >&2)
+    echo "DEBUG: log will be stored in $(pwd)/debug.log"
+
+}
+
 function connect_adb {
     # Establish an ADB session and get the emulator name
     $adb_bin connect $deviceip
@@ -16,6 +25,7 @@ function connect_adb {
     sleep 3
     adb_id=$(adb devices | grep -w "device" | awk '{print $1}')
     adb_bin="$adb_bin -s $adb_id"
+
 }
 
 function disconnect_adb {
@@ -137,7 +147,7 @@ function quick_state {
 # Argument Processing #
 #######################
 # Execute getopt on the arguments passed to this program, identified by the special character $@
-args=`getopt -n "$0" -o "d:ha:k:s:" --long "deviceip:,app:,keys:,state:" -- "$@"`
+args=`getopt -n "$0" -o "d:hga:k:s:" --long "deviceip:,app:,keys:,state:,debug" -- "$@"`
 
 # Bad arguments, something has gone wrong with the getopt command.
 if [ $? -ne 0 ];
@@ -177,7 +187,6 @@ do
 	    quick_state $state
 	    shift 2;;
 
-
 	-a|--app)
 	    if [ -n "$2" ]; then
 		package=$2
@@ -185,6 +194,11 @@ do
 	    start_app
 
 	    shift 2;;
+
+	-g|--debug)
+	    enable_debug 
+	   
+	    shift 1;;
 
 	-h|--help)
 	    # Print help information
@@ -198,6 +212,8 @@ do
 	    echo "-s | --state"
 	    echo -e "\tQuick State, currently supported options are;\n"
 	    echo -e "\t\twake, sleep, reboot\n"
+	    echo "-g | --debug"
+	    echo -e "\tEnable bash debugger (-xv)\n"
 	    echo "-h | --help"
 	    echo -n "\tDisplay this help menu\n"
 	    exit
