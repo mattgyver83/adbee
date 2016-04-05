@@ -102,6 +102,7 @@ function send_keyevent {
 		esac
 	if [ -v longpress ]; then
 	    $adb_bin shell input keyevent --longpress "$var"
+	    sleep 1
 	    unset longpress
 	else
 	    $adb_bin shell input keyevent "$var"
@@ -129,6 +130,7 @@ function quick_state {
 		    fi 
 		    shift 2;;
 		mirror)
+		    send_keyevent KEYCODE_WAKEUP
 		    send_keyevent settings right enter
 		    shift 2;;
 		settings)
