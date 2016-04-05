@@ -229,6 +229,8 @@ do
 	    echo "-s | --state"
 	    echo -e "\tQuick State, currently supported options are;\n"
 	    echo -e "\t\twake, sleep, reboot\n"
+	    echo "-m | --maintain"
+	    echo -e "\tDo not disconnect adb upon completion (default=disconnected);\n"
 	    echo "-g | --debug"
 	    echo -e "\tEnable bash debugger (-xv)\n"
 	    echo "-h | --help"
