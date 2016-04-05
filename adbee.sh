@@ -209,7 +209,8 @@ do
 	    shift 1;;
 
         -m|--maintain)
-            maintain=1
+            connected=1 
+	    maintain=1
           
             shift 1;;
 
