@@ -211,11 +211,8 @@ do
         -m|--maintain)
             connected=1 
 	    maintain=1
-          
+         
             shift 1;;
-
-
-
 
 	-h|--help)
 	    # Print help information
