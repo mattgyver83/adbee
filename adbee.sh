@@ -155,7 +155,7 @@ function quick_state {
 # Argument Processing #
 #######################
 # Execute getopt on the arguments passed to this program, identified by the special character $@
-args=`getopt -n "$0" -o "d:hga:k:s:" --long "deviceip:,app:,keys:,state:,debug" -- "$@"`
+args=`getopt -n "$0" -o "d:mhga:k:s:" --long "deviceip:,app:,keys:,state:,debug" -- "$@"`
 
 # Bad arguments, something has gone wrong with the getopt command.
 if [ $? -ne 0 ];
@@ -208,6 +208,14 @@ do
 	   
 	    shift 1;;
 
+        -m|--maintain)
+            maintain=1
+          
+            shift 1;;
+
+
+
+
 	-h|--help)
 	    # Print help information
 	    echo "Available options:"
@@ -234,4 +242,6 @@ do
     esac
 done
 
-disconnect_adb
+if [ ! -v maintain ]; then
+    disconnect_adb
+fi
