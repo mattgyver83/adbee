@@ -155,7 +155,7 @@ function quick_state {
 # Argument Processing #
 #######################
 # Execute getopt on the arguments passed to this program, identified by the special character $@
-args=`getopt -n "$0" -o "d:mhga:k:s:" --long "deviceip:,app:,keys:,state:,debug" -- "$@"`
+args=`getopt -n "$0" -o "d:mhga:k:s:" --long "deviceip:,app:,keys:,state:,debug,maintain,help" -- "$@"`
 
 # Bad arguments, something has gone wrong with the getopt command.
 if [ $? -ne 0 ];
