@@ -27,7 +27,7 @@ function connect_adb {
     $adb_bin connect $deviceip
     connected=1
     sleep 3
-    adb_id=$($adb_bin devices | grep -w "device" | awk '{print $1}')
+    adb_id=$($adb_bin devices | grep -w $deviceip | grep -w "device" | awk '{print $1}')
     adb_bin="$adb_bin -s $adb_id"
 
 }
