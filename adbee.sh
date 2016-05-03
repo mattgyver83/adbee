@@ -112,8 +112,10 @@ function send_keyevent {
 }
 
 function start_app {
-# start_app <com.package.name/com.package.name.ActivityName>
-    $adb_bin shell am start -n $package
+# start_app <com.package.name>
+    send_keyevent KEYCODE_WAKEUP
+    packageIntent=$($adb_bin shell pm dump $package | grep -A 1 "MAIN" | grep $package | awk '{print $2}' | grep $package) 
+    $adb_bin shell am start -n ${packageIntent::-1}
 
 }
 
@@ -133,7 +135,7 @@ function quick_state {
 		    if $adb_bin shell dumpsys power | grep -q "Display Power: state=OFF" ; then 
 			send_keyevent KEYCODE_WAKEUP
 		    fi 
-		    send_keyevent settings right enter
+		    send_keyevent settings right right enter
 		    shift 2;;
 		settings)
 		    send_keyevent settings right right enter
@@ -149,7 +151,6 @@ function quick_state {
 		esac
 
 }
-
 
 #######################
 # Argument Processing #
@@ -220,7 +221,7 @@ do
 	    echo "-d | --deviceip"
 	    echo -e "\tThe IP Address for the device you are connecting to\n"
 	    echo "-a | --app"
-	    echo -e "\tApplication to start in com.package.name/com.package.name.Activity format\n"
+	    echo -e "\tApplication to start in com.package.name format\n"
 	    echo "-k | --keys"
 	    echo -e "\tKey events to send to device (enclose multiple in double quotes)\n"
 	    echo "-s | --state"
