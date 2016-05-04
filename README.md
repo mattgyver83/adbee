@@ -47,7 +47,7 @@ There is kind of a right way and wrong way to execute this since there is no syn
 > Typically your going to execute something simple and honestly its preferred.  So something like this;
 > adbee.sh -d < ipaddress > -s sleep
 > or
-> adbee.sh -d < ipaddress > -a com.netflix.ninja/com.netflix.ninja.MainActivity
+> adbee.sh -d < ipaddress > -a com.netflix.ninja
 > and even
 > adbee.sh -d < ipaddress > --keys "left right enter"
 
@@ -64,9 +64,9 @@ The IP Address for the device you are connecting to
 
 
 >-a | --app
-Application to start in com.package.name/com.package.name.Activity format.
+Application to start in com.package.name
 
->So for example, com.netflix.ninja/com.netflix.ninja.MainActivity
+>So for example, com.netflix.ninja
 
 >I have tested this and it works but I didn't really have a practical purpose for this yet so it may need some tweaking to make it more useful and sane.
 
