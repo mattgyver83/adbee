@@ -7,7 +7,7 @@ source /etc/profile
 adb_bin=$(which adb)
 
 # debug log file location (default adb dir)
-logfile=/var/log/openhab/adbee/debug.log
+logfile="$(dirname $(which adb))/adbee-debug.log"
 
 #############
 # Functions #
@@ -206,7 +206,7 @@ do
 
 	-g|--debug)
 	    enable_debug 
-	   
+	    
 	    shift 1;;
 
         -m|--maintain)
@@ -228,7 +228,7 @@ do
 	    echo -e "\tQuick State, currently supported options are;\n"
 	    echo -e "\t\twake, sleep, reboot\n"
 	    echo "-m | --maintain"
-	    echo -e "\tDo not disconnect adb upon completion (default=disconnected);\n"
+	    echo -e "\tDo not disconnect adb upon completion (default=disconnect);\n"
 	    echo "-g | --debug"
 	    echo -e "\tEnable bash debugger (-xv)\n"
 	    echo "-h | --help"
