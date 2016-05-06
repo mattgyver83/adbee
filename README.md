@@ -24,7 +24,7 @@ Here's a few things your probably wondering.
 I really can't guarantee anything but you could mark it as an issue or something here on github.  I honestly don't like maintaining anything I make - I like many of you get things "good enough" for me and then walk away from them, seasons change.  This is built pretty well though so I don't think you will be left high and dry and I expect this is going to become a pretty big piece of my Home Automation setup as I decide I need to do more with Android devices.
 
 > **So, really, your not a developer whats doesn't work**
-Glad you asked.  So the debug and maintain option actually require that they are the first two arguments, specifically if you want to use them it should be 'debug, then maintain' but in a perfect world you won't need them and honestly I advise against it just because its chatty and can create its own issues if your keeping sessions connected.  In fact right now there isn't anything in place to make sure your using the args in the right order so i'll add that in another section because thats important to know.
+Glad you asked.  So the debug and preserve option actually require that they are the first two arguments, specifically if you want to use them it should be 'debug, then preserve' but in a perfect world you won't need them and honestly I advise against it just because its chatty and can create its own issues if your keeping sessions connected.  In fact right now there isn't anything in place to make sure your using the args in the right order so i'll add that in another section because thats important to know.
 
 Its mostly implied but there are a few requirements.
 
@@ -40,7 +40,7 @@ Here are the order of operations
 >  2. If the operation requires it its going to run a dumpsys on the device to get some state information.
 >  3. The action should be run
 >  4. The adb session is closed by default.  This is actually sort of important if you want to use multiple devices so unless you have good
-> reason no need to use -m|--maintain
+> reason no need to use -p|--preserve
 
 There is kind of a right way and wrong way to execute this since there is no syntax detection yet.
 
@@ -93,7 +93,7 @@ wake, sleep, reboot, mirror
 ----------
 
 
->-m | --maintain
+>-p | --preserve
 Do not disconnect adb upon completion (default=disconnected)
 
 >This will alter the default behavior of disconnecting.  There have been a few times where I wanted to use this when troubleshooting but thats it outside of that, kinda like debug if you don't need it don't use it because the default script logic is built around you disconnecting from the device.

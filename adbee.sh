@@ -53,47 +53,44 @@ function send_keyevent {
 	do
 	    case "$var" in
 		up)
-		    var=19
+		    var=KEYCODE_DPAD_UP
 		    shift 2;;
 		down)
-		    var=20
+		    var=KEYCODE_DPAD_DOWN
 		    shift 2;;
 		left)
-		    var=21
+		    var=KEYCODE_DPAD_LEFT
 		    shift 2;;
 		right)
-		    var=22
+		    var=KEYCODE_DPAD_RIGHT
 		    shift 2;;
 		enter)
-		    var=66
+		    var=KEYCODE_ENTER
 		    shift 2;;
 		back)
-		    var=4
+		    var=KEYCODE_BACK
 		    shift 2;;
 		home)
-		    var=3
-		    shift 2;;
-		menu)
-		    var=1
+		    var=KEYCODE_HOME
 		    shift 2;;
 		play)
-		    var=85
+		    var=KEYCODE_MEDIA_PLAY_PAUSE
 		    shift 2;;
 		pause)
-		    var=85
+		    var=KEYCODE_MEDIA_PLAY_PAUSE
 		    shift 2;;
 		previous)
-		    var=88
+		    var=KEYCODE_MEDIA_PREVIOUS
 		    shift 2;;
 		next)
-		    var=87
+		    var=KEYCODE_MEDIA_NEXT
 		    shift 2;;
 		power)
-		    var=26
+		    var=KEYCODE_POWER
 		    shift 2;;
 		settings)
 		    longpress=1 
-		    var=3
+		    var=KEYCODE_HOME
 		    shift 2;;
 		--)
 		    # There are no final arguments left to process, end
@@ -156,7 +153,7 @@ function quick_state {
 # Argument Processing #
 #######################
 # Execute getopt on the arguments passed to this program, identified by the special character $@
-args=`getopt -n "$0" -o "d:mhga:k:s:" --long "deviceip:,app:,keys:,state:,debug,maintain,help" -- "$@"`
+args=`getopt -n "$0" -o "d:phga:k:s:" --long "deviceip:,app:,keys:,state:,debug,preserve,help" -- "$@"`
 
 # Bad arguments, something has gone wrong with the getopt command.
 if [ $? -ne 0 ];
@@ -209,9 +206,9 @@ do
 	    
 	    shift 1;;
 
-        -m|--maintain)
+        -p|--preserve)
             connected=1 
-	    maintain=1
+	    preserve=1
          
             shift 1;;
 
@@ -227,15 +224,14 @@ do
 	    echo "-s | --state"
 	    echo -e "\tQuick State, currently supported options are;\n"
 	    echo -e "\t\twake, sleep, reboot\n"
-	    echo "-m | --maintain"
-	    echo -e "\tDo not disconnect adb upon completion (default=disconnect);\n"
+	    echo "-p | --preserve"
+	    echo -e "\tDo not disconnect adb after execution\n"
 	    echo "-g | --debug"
 	    echo -e "\tEnable bash debugger (-xv)\n"
 	    echo "-h | --help"
-	    echo -n "\tDisplay this help menu\n"
-	    exit
-	    shift 2;;
-
+	    echo -n "\tDisplay this help menu\n" 
+	    exit 
+	    shift 2;; 
 	--)
 	    # There are no final arguments left to process, end
 	    shift
@@ -243,6 +239,6 @@ do
     esac
 done
 
-if [ ! -v maintain ]; then
+if [ ! -v preserve ]; then
     disconnect_adb
 fi
