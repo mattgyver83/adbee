@@ -5,9 +5,10 @@
 # the location of the adb util
 source /etc/profile
 adb_bin=$(which adb)
+sniffer_bin=/opt/ha-bridge/bridge-sniffer/bridge-sniffer.sh
 
 # debug log file location (default adb dir)
-logfile="$(dirname $(which adb))/adbee-debug.log"
+logfile=/var/log/openhab/adbee/debug.log
 
 #############
 # Functions #
@@ -153,7 +154,7 @@ function quick_state {
 # Argument Processing #
 #######################
 # Execute getopt on the arguments passed to this program, identified by the special character $@
-args=`getopt -n "$0" -o "d:phga:k:s:" --long "deviceip:,app:,keys:,state:,debug,preserve,help" -- "$@"`
+args=`getopt -n "$0" -o "d:phga:k:s:" --long "deviceip:,app:,keys:,state:,ha:,debug,preserve,help" -- "$@"`
 
 # Bad arguments, something has gone wrong with the getopt command.
 if [ $? -ne 0 ];
@@ -168,6 +169,16 @@ eval set -- "$args"
 while true;
 do
     case "$1" in
+
+	--ha)
+	    if [ -n "$2" ]; then
+	         deviceip=$($sniffer_bin -g -n "$2")
+	    fi
+
+	    echo "Bridge Sniffer: detected $deviceip as the request initiators closest neighbor"
+
+	    connect_adb 
+	    shift 2;;
 
 	-d|--deviceip)
 	    if [ -n "$2" ]; then
@@ -217,6 +228,8 @@ do
 	    echo "Available options:"
 	    echo "-d | --deviceip"
 	    echo -e "\tThe IP Address for the device you are connecting to\n"
+	    echo "--ha"
+	    echo -e "\tDetermine the IP address of the system from your HA via bridge-sniffer (beta)\n"
 	    echo "-a | --app"
 	    echo -e "\tApplication to start in com.package.name format\n"
 	    echo "-k | --keys"

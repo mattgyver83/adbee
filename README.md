@@ -4,7 +4,7 @@ This is an ADB wrapper script.  I made it with the intent of controlling my Amaz
 
 Here's a few things your probably wondering.
 > **Whats it do**
-> It is kinda straight forward actually.  You pass it a pretty simplified command and behind the scenes it takes that and calls an ADB shell command.  This obviously means you need to have ADB installed.
+> It is kinda straight forward actually.  You pass it a pretty simplified command and behind the scenes it takes that and calls an ADB shell command.  This obviously means you need to have ADB installed.  It also can leverage my bridge-sniffer script if you are using ha-bridge and have manually configured logging to a file.
 
 > **Why do I need it**
 > Well .. you don't really.  But if your using some Home Automation software like OpenHAB and at this moment you have an Amazon FireTV, Echo, and OpenHAB setup then you can leverage it to do a few things like;
@@ -13,6 +13,7 @@ Here's a few things your probably wondering.
  - Sleep and Wake the device
  - Turn on (only) Screen Mirroring
  - Send keyevents to emulate remote button presses
+ - Create ambigious devices in HA-Bridge so different devices are called based on location proximity
 
 > **How are you using it**
 > Its a bash shell script that runs on my raspberry pi that runs my Home Automation server [OpenHAB](http://www.openhab.org) along side of [ha-bridge](https://github.com/bwssytems/ha-bridge) which emulates a Phillips Hue Bridge.  I create items in OpenHAB and use the exec binding to execute my script the way I want it based on how I want that action to behave.  So like if I want to wake up my FireTV then I just set the exec binding to '/path/to/script/adbee.sh -d < ipaddress > -s wake' for the ON: action, and '< the same thing except > -s sleep' for the OFF: action.  Then just create the device in ha-bridge and setup your URL like you would and tell Alexa to "Discover Devices".  Once she sees the new devices if you played the home game correctly your action will kick off.
@@ -21,7 +22,7 @@ Here's a few things your probably wondering.
 > Basically the same way.  Just know its not perfect and I am not a developer.  While I would love to bake in a lot of things and make it better that is never a long term guarantee because I get bored easily and really made this to suit my needs but I feel like it should be made available for anyone looking for good bones to start from.  It will run on any Linux system as long as your using bash so you don't have to use a pi like me and really its just an adb script so it could be used for anything else you need to just achieve from a linux system to an android device.
 
 > **Can you add X Feature**
-I really can't guarantee anything but you could mark it as an issue or something here on github.  I honestly don't like maintaining anything I make - I like many of you get things "good enough" for me and then walk away from them, seasons change.  This is built pretty well though so I don't think you will be left high and dry and I expect this is going to become a pretty big piece of my Home Automation setup as I decide I need to do more with Android devices.
+I really can't guarantee anything but you could mark it as an issue or something here on github.  
 
 > **So, really, your not a developer whats doesn't work**
 Glad you asked.  So the debug and preserve option actually require that they are the first two arguments, specifically if you want to use them it should be 'debug, then preserve' but in a perfect world you won't need them and honestly I advise against it just because its chatty and can create its own issues if your keeping sessions connected.  In fact right now there isn't anything in place to make sure your using the args in the right order so i'll add that in another section because thats important to know.
@@ -32,7 +33,7 @@ Its mostly implied but there are a few requirements.
 >  2. The android device your going to connect to has "USB Debugging" enabled.
 >  3. ADB is already installed and located in your PATH
 >  4. Whatever user your running the script as can execute ADB also.
-
+>  5. If you intend on incorporating using this dynamically via ha-bridge you will also need bridge-sniffer
 
 Here are the order of operations
 
@@ -57,7 +58,15 @@ Here is a list of those arguments.  Its way down here so you were forced to read
 
 > 
 -d | --deviceip
-The IP Address for the device you are connecting to
+The IP Address for the device you are connecting to.  Do not specify this if you are using --ha with HA Bridge.
+
+----------
+>--ha
+Get the closest neighbor from your home automation system.
+
+>Example: --ha ThisTV
+
+>This currently only supports scraping bw-systems ha-bridge log files which by default are not enabled.  This is a niche feature which wields a lot of power however for most purposes this will never be needed and it can be disregarded.  When providing ensure you provide the Bridge Device name as configured in ha-bridge.
 
 
 ----------
@@ -115,7 +124,3 @@ enable bash debugger (set -x & set -v)
 Display the help menu
 
 >its nothing like this but its good enough for mere mortals
-
-
-
-
